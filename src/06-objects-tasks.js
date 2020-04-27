@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* ************************************************************************************************
  *                                                                                                *
  * Plese read the following tutorial before implementing tasks:                                   *
@@ -20,8 +21,13 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  // eslint-disable-next-line func-names
+  this.getArea = function () {
+    return this.width * this.height;
+  };
 }
 
 
@@ -35,8 +41,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -51,8 +57,10 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const resultObj = JSON.parse(json);
+  Object.setPrototypeOf(resultObj, proto);
+  return resultObj;
 }
 
 
@@ -110,40 +118,93 @@ function fromJSON(/* proto, json */) {
  *  For more examples see unit tests.
  */
 
-const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+/* const cssSelectorBuilder = {
+  cssSelectorsCombination: '',
+  cssSelectorsComplect: {
+    type: '',
+    id: '',
+    classes: [],
+    attributes: [],
+    pseudoClasses: [],
+    pseudoElement: '',
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.type = value;
+    return newCssSelectorBuilder;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.id = `#${value}`;
+    return newCssSelectorBuilder;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.classes.push(`.${value}`);
+    return newCssSelectorBuilder;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.attributes.push(`[${value}]`);
+    return newCssSelectorBuilder;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.pseudoClasses.push(`:${value}`);
+    return newCssSelectorBuilder;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsComplect = { ...this.cssSelectorsComplect };
+    newCssSelectorBuilder.cssSelectorsComplect.pseudoElement = `::${value}`;
+    return newCssSelectorBuilder;
+  },
+
+  stringify() {
+    if (!this.cssSelectorsCombination) {
+      let cssSelectorString = '';
+      // eslint-disable-next-line no-restricted-syntax
+      for (const selector in this.cssSelectorsComplect) {
+        if (typeof this.cssSelectorsComplect[selector] === 'string') {
+          cssSelectorString += this.cssSelectorsComplect[selector];
+          this.cssSelectorsComplect[selector] = '';
+        } else {
+          cssSelectorString += this.cssSelectorsComplect[selector].join('');
+          this.cssSelectorsComplect[selector] = [];
+        }
+      }
+      return cssSelectorString;
+    } return this.cssSelectorsCombination;
+  },
+
+  combine(selector1, combinator, selector2) {
+    const newCssSelectorBuilder = Object.create(cssSelectorBuilder);
+    newCssSelectorBuilder.cssSelectorsCombination = `${selector1.stringify()}
+    ${combinator} ${selector2.stringify()}`;
+    return newCssSelectorBuilder;
   },
 };
 
+const builder = cssSelectorBuilder;
+console.log(builder.id('main').class('container').class('editable').stringify());
+console.log(builder.element('a').attr('href$=".png"').pseudoClass('focus').stringify());
+console.log(builder.combine(builder.element('tr').pseudoClass('nth-of-type(even)'), '~',
+  builder.element('td').pseudoClass('nth-of-type(even)')).stringify()); */
 
 module.exports = {
   Rectangle,
   getJSON,
   fromJSON,
-  cssSelectorBuilder,
+  /* cssSelectorBuilder, */
 };
