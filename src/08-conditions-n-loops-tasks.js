@@ -392,14 +392,20 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  /* const result = '';
-  const pathArrays = [];
+function getCommonDirectoryPath(pathes) {
+  const result = [];
+  let pathArrays = [];
   pathArrays.length = pathes.length;
   pathArrays.fill(0);
-  pathArrays.map((item) => item.split('')); */
-}
+  pathArrays = pathArrays.map((item, index) => pathes[index].split('/'));
 
+  pathArrays[0].forEach((dir, index) => {
+    if (pathArrays.every((item) => item[index] === dir)) {
+      result.push(dir);
+    }
+  });
+  return result.length > 0 ? `${result.join('/')}/` : '';
+}
 
 /**
  * Returns the product of two specified matrixes.
@@ -419,23 +425,33 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  /* const result = [];
+function getMatrixProduct(m1, m2) {
+  const temp = [];
 
-  for (let i = 0; i < m1.length; i += 1) result[i] = [];
-  for (let k = 0; k < m2.length; k += 1) {
-    for (let i = 0; i < m1[0].length; i += 1) {
-      let t = 0;
-      for (let j = 0; j < m2[0].length; j += 1) {
-        t = m1[i][j] * m2[j][k];
-        result[i][k] = t;
-      }
-    }
+  for (let i = 0; i < m1.length; i += 1) {
+    temp[i] = [];
+    temp[i].length = m2[0].length;
+    temp[i].fill(0);
   }
-  return result; */
+
+  const res = [];
+
+  temp.forEach((line, i) => {
+    res.push(line.map((cell, j) => m1[i].reduce((sum, item, k) => sum + item * m2[k][j], 0)));
+  });
+
+  return res;
 }
-
-
+/* console.log(getMatrixProduct([
+  [1, 0, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+], [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9],
+])); */
+// console.log(getMatrixProduct([[1, 2, 3]], [[4], [5], [6]]));
 /**
  * Returns the evaluation of the specified tic-tac-toe position.
  * See the details: https://en.wikipedia.org/wiki/Tic-tac-toe
@@ -466,10 +482,36 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
-}
+function evaluateTicTacToePosition(position) {
+  let winner;
+  // check lines
+  position.forEach((line) => {
+    if (line.every((item) => item === line[0]) && line.length === 3) {
+      // eslint-disable-next-line prefer-destructuring
+      winner = line[0];
+    }
+  });
 
+  // check columns
+  if (!winner) {
+    position[0].forEach((column, index) => {
+      if (position.every((line) => line[index] === column)) {
+        winner = column;
+      }
+    });
+  }
+
+  // check diagonals
+  if (!winner) {
+    const center = position[1][1];
+    if ((position[0][0] === center && position[2][2] === center)
+      || (position[0][2] === center && position[2][0] === center)) {
+      winner = center;
+    }
+  }
+
+  return winner;
+}
 
 module.exports = {
   getFizzBuzz,
